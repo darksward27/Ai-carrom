@@ -1,0 +1,88 @@
+# Carrom Pool ML Bot Configuration
+
+# Device Settings
+device:
+  adb_host: "127.0.0.1"
+  adb_port: 5037
+  device_id: null  # Set to specific device ID if multiple devices
+  screen_resolution: [1080, 1920]  # [width, height]
+  game_area: [100, 300, 980, 1620]  # [x1, y1, x2, y2] game board boundaries
+
+# Game Detection Settings
+detection:
+  board_template_path: "templates/board.png"
+  piece_templates:
+    white: "templates/white_piece.png"
+    black: "templates/black_piece.png"
+    queen: "templates/queen.png"
+    striker: "templates/striker.png"
+  
+  # HSV color ranges for piece detection
+  color_ranges:
+    white_piece: [[0, 0, 200], [180, 30, 255]]
+    black_piece: [[0, 0, 0], [180, 255, 50]]
+    queen_piece: [[0, 100, 100], [10, 255, 255]]
+    board_brown: [[10, 50, 50], [25, 255, 200]]
+  
+  # Detection thresholds
+  template_match_threshold: 0.8
+  contour_area_min: 100
+  contour_area_max: 5000
+
+# ML Model Settings
+model:
+  # CNN for board state recognition
+  cnn:
+    input_shape: [224, 224, 3]
+    num_classes: 4  # empty, white, black, queen
+    batch_size: 32
+    epochs: 100
+    learning_rate: 0.001
+  
+  # Reinforcement Learning for strategy
+  rl:
+    algorithm: "DQN"  # Deep Q-Network
+    state_size: 256   # Flattened board state + game info
+    action_size: 1000 # Discretized striker positions and power
+    memory_size: 10000
+    epsilon_start: 1.0
+    epsilon_min: 0.01
+    epsilon_decay: 0.995
+    learning_rate: 0.001
+    gamma: 0.95  # Discount factor
+    batch_size: 32
+    update_frequency: 4
+
+# Game Physics Simulation
+physics:
+  friction_coefficient: 0.1
+  restitution: 0.8  # Bounciness
+  striker_mass: 1.0
+  piece_mass: 0.8
+  board_size: 400  # Simulation board size in pixels
+  pocket_radius: 20
+  piece_radius: 8
+  striker_radius: 10
+
+# Training Settings
+training:
+  episodes: 1000
+  max_steps_per_episode: 50
+  save_frequency: 100
+  model_save_path: "models/"
+  log_frequency: 10
+  screenshot_frequency: 5
+
+# Gameplay Settings
+gameplay:
+  shot_power_range: [0.3, 1.0]  # Min/max shot power
+  aim_precision: 0.01  # Radians
+  shot_delay: 2.0  # Seconds between shots
+  game_timeout: 300  # Maximum game duration in seconds
+  
+# Logging
+logging:
+  level: "INFO"
+  file: "logs/carrom_bot.log"
+  max_size: "10MB"
+  backup_count: 5 
